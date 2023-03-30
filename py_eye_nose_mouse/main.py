@@ -539,4 +539,5 @@ while game_start == True:
 time.sleep(3)
 os.system('clear')  # 콘솔창 clear
 
-endding_bye('\033[33m 게임 끝났어 친구야~! 고생했다~!\033[0m')
+
+endding_bye(f'\033[33m 게임 끝났어 {player.name}아(야) 고생했다~!\033[0m')
