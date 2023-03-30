@@ -1,8 +1,8 @@
-# # from random import randint, random
-# import random
+# from random import randint, random
+
+import random
 # import os
 # import time
-# from random import randint
 # - 규칙
 #     - 협업을 위해 코드 컨벤션을 정해야 합니다.
 #     - 기능별로 파일을 나눠 작업해야 합니다.
@@ -24,17 +24,17 @@ class Monster():
         self.normal_attack_name = normal_attack_name
 
     def normal_attack(self, target):  # 일반공격
-        m_damage = random.randint(self.power*0.8, self.power*1.2)
-        target.hp -= m_damage
+        m_damage = random.randint(self.power-5, self.power+5)
+        target.hp = max(target.hp - m_damage, 0)
         print(
             f"{self.name}의 {self.normal_attack_name}! {target.name}에게 {m_damage}의 데미지를 입혔습니다.")
         if target.hp == 0:
             print(f"{target.name}이(가) 쓰러졌습니다.")
 
     def show_status(self):
-        print(f'================={self.name}상태정보=====================')
-        print(f"{self.name}의 상태: HP {self.hp}/{self.max_hp}")
-        print(f'========================================================')
+        print(f"\033[33m================={self.name}의 상태정보=====================\n"
+              f"{self.name}의 상태: HP {self.hp}/{self.max_hp}\n"
+              f"========================================================\033[0m")
 
 
 class Character():  # 전직시 normal_attack
@@ -62,17 +62,21 @@ class Character():  # 전직시 normal_attack
 
     def normal_attack(self, target):  # 일반공격
         damage = random.randint(self.power*2, self.power*3)
-        target.hp -= damage
+        target.hp = max(target.hp - damage, 0)
         print(
             f"{self.name}의 {self.normal_attack_name}! {target.name}에게 {damage}의 데미지를 입혔습니다.")
         if target.hp == 0:
             print(f"{target.name}이(가) 쓰러졌습니다.")
 
     def show_status(self):
-        print(f'================={self.name}상태정보=====================')
-        print(f"{self.name}의 상태: HP {self.hp}/{self.max_hp}")
-        print(f"{self.name}의 상태: MP {self.mp}/{self.max_mp}")
-        print(f'========================================================')
+        print(f'\033[33m================={self.name}의 상태정보=====================\n'
+              f"{self.name}의 HP: {self.hp}/{self.max_hp}\n"
+              f"{self.name}의 MP: {self.mp}/{self.max_mp}\n"
+              f"{self.name}의 LEVEL: {self.level}\n"
+              f"{self.name}의 직업 : 나는 배짱이 \n"
+              f"{self.name}의 공격력 : {self.power}\n"
+              f"{self.name}의 속도 : {self.speed}\n"
+              f'========================================================\033[0m')
 
 
 #           # 모험가
@@ -97,93 +101,263 @@ class Adventurer_Character(Character):
             print(f'\033[91m잘못된선택입니다.\033[0m')
 
     def magic_attack(self, target):  # 마법공격
-        damage = random.randint(self.power*2, self.power*3)
-        self.mp -= 10
-        target.hp -= damage
-        print(
-            f"{self.name}의 {self.magic_attack_name}! {target.name}에게 {damage}의 데미지를 입혔습니다.")
-        if target.hp == 0:
-            print(f"{target.name}이(가) 쓰러졌습니다.")
+        if self.mp >= 10:
+            damage = random.randint(self.power*2, self.power*3)
+            self.mp -= 10
+            target.hp = max(target.hp - damage, 0)
+            print(
+                f"{self.name}의 {self.magic_attack_name}! {target.name}에게 {damage}의 데미지를 입혔습니다.")
+            if target.hp == 0:
+                print(f"{target.name}이(가) 쓰러졌습니다.")
+        else:
+            # 마나가 부족할 경우
+            print("마나가 부족하여 마법공격을 할 수 없습니다.")
 
     def Adventurer_Skill(self, target):
         self.magic_attack_name = print(f'맞은데 또 맞아라!')
         magic_name = '맞은데 또 맞아라!'
         damage = random.randint(self.power*1, self.power*2)
-        target.hp -= damage*2
+        target.hp = max(target.hp - damage*2, 0)
         print(
-            f"{self.name}의\33[32m {magic_name}발동!\33[0m {self.magic_attack_name}! {target.name}에게 {damage}의 데미지를 입혔습니다.")
+            f"{self.name}의\033[32m {magic_name}발동!\033[0m {self.magic_attack_name}! {target.name}에게 {damage}의 데미지를 입혔습니다.")
         if target.hp == 0:
             print(f"{target.name}이(가) 쓰러졌습니다.")
         # 노말어택 2번나가기
 
-#               - 법사(썬,콜) 디버프(Monster def 감소)
+    def show_status(self):
+        print(f'\033[33m================={self.name}의 상태정보=====================\n'
+              f"{self.name}의 HP: {self.hp}/{self.max_hp}\n"
+              f"{self.name}의 MP: {self.mp}/{self.max_mp}\n"
+              f"{self.name}의 LEVEL: {self.level}\n"
+              f"{self.name}의 직업 : 나는 배짱이 \n"
+              f"{self.name}의 공격력 : {self.power}\n"
+              f"{self.name}의 속도 : {self.speed}\n"
+              f'========================================================\033[0m')
 
 
-class Magician_Character(Adventurer_Character):
+class Magician_Character(Character):
     def __init__(self, name, hp, mp, power, speed, critical, normal_attack_name, level, magic_attack_name):
-        super().__init__(self, name, hp, mp, power, speed, critical,
-                         normal_attack_name, level)
+        super().__init__(name, hp, mp, power, speed,
+                         critical, normal_attack_name, level)
+        self.magic_attack_name = magic_attack_name
+
+    def attack_box(self, target):
+        active = int(input('공격선택 :\n 일반공격(1) \n 마법공격(2)'))
+        if active == 1:
+            self.normal_attack(target)
+        elif active == 2:
+            self.Adventurer_Skill(target)
+        elif not active.isdigit():
+            print("숫자로만 입력해 주세요.")
+        elif active < 0 or active > 2:
+            print(f'\033[91m잘못된선택입니다.\033[0m')
+
+    def magic_attack(self, target):  # 마법공격
+        if self.mp >= 10:
+            damage = random.randint(self.power*2, self.power*3)
+            self.mp -= 10
+            target.hp = max(target.hp - damage, 0)
+            print(
+                f"{self.name}의 {self.magic_attack_name}! {target.name}에게 {damage}의 데미지를 입혔습니다.")
+            if target.hp == 0:
+                print(f"{target.name}이(가) 쓰러졌습니다.")
+        else:
+            # 마나가 부족할 경우
+            print("마나가 부족하여 마법공격을 할 수 없습니다.")
 
     def Magician_Skill(self, target):
         self.magic_attack_name = print(f'6,000만 볼트 뇌룡')
         damage = random.randint(self.power*1, self.power*2)
-        target.hp -= damage*2
+        target.hp = max(target.hp - damage*2, 0)
         print(
             f"{self.name}의 {self.magic_attack_name}! {target.name}에게 {damage}의 데미지를 입혔습니다.")
         if target.hp == 0:
             print(f"{target.name}이(가) 쓰러졌습니다.")
+        # 노말어택 2번나가기
+
+    def show_status(self):
+        print(f'\033[33m================={self.name}의 상태정보=====================\n'
+              f"{self.name}의 HP: {self.hp}/{self.max_hp}\n"
+              f"{self.name}의 MP: {self.mp}/{self.max_mp}\n"
+              f"{self.name}의 LEVEL: {self.level}\n"
+              f"{self.name}의 직업 : 나는 배짱이 \n"
+              f"{self.name}의 공격력 : {self.power}\n"
+              f"{self.name}의 속도 : {self.speed}\n"
+              f'========================================================\033[0m')
+
+#               - 법사(썬,콜) 디버프(Monster def 감소)
+
+
+# class Magician_Character(Adventurer_Character):
+#     def __init__(self, name, hp, mp, power, speed, critical, normal_attack_name, level, magic_attack_name):
+#         super().__init__(self, name, hp, mp, power,
+#                          speed, critical, normal_attack_name, level)
+
+#     def Magician_Skill(self, target):
+#         self.magic_attack_name = print(f'6,000만 볼트 뇌룡')
+#         damage = random.randint(self.power*1, self.power*2)
+#         target.hp -= damage*2
+#         print(
+#             f"{self.name}의 {self.magic_attack_name}! {target.name}에게 {damage}의 데미지를 입혔습니다.")
+#         if target.hp == 0:
+#             print(f"{target.name}이(가) 쓰러졌습니다.")
 
 #               - 전사(파이터)
 
-
-class Warrior_Character(Adventurer_Character):
+class Warrior_Character(Character):
     def __init__(self, name, hp, mp, power, speed, critical, normal_attack_name, level, magic_attack_name):
-        super().__init__(self, name, hp, mp, power, speed, critical,
-                         normal_attack_name, level)
+        super().__init__(name, hp, mp, power, speed,
+                         critical, normal_attack_name, level)
+        self.magic_attack_name = magic_attack_name
+
+    def attack_box(self, target):
+        active = int(input('공격선택 :\n 일반공격(1) \n 마법공격(2)'))
+        if active == 1:
+            self.normal_attack(target)
+        elif active == 2:
+            self.Adventurer_Skill(target)
+        elif not active.isdigit():
+            print("숫자로만 입력해 주세요.")
+        elif active < 0 or active > 2:
+            print(f'\033[91m잘못된선택입니다.\033[0m')
+
+    def magic_attack(self, target):  # 일반공격
+        if self.mp >= 10:
+            damage = random.randint(self.power*2, self.power*3)
+            self.mp -= 10
+            target.hp = max(target.hp - damage, 0)
+            print(
+                f"{self.name}의 {self.magic_attack_name}! {target.name}에게 {damage}의 데미지를 입혔습니다.")
+            if target.hp == 0:
+                print(f"{target.name}이(가) 쓰러졌습니다.")
+        else:
+            # 마나가 부족할 경우
+            print("마나가 부족하여 마법공격을 할 수 없습니다.")
 
     def Warrior_Skill(self, target):
         self.magic_attack_name = print(f'천본앵경엄(せんぼんざくらかげよし)')
         damage = random.randint(self.power*1, self.power*2)
-        target.hp -= damage*2
+        target.hp = max(target.hp - damage*2, 0)
         print(
             f"{self.name}의 {self.magic_attack_name}! {target.name}에게 {damage}의 데미지를 입혔습니다.")
         if target.hp == 0:
             print(f"{target.name}이(가) 쓰러졌습니다.")
+        # 노말어택 2번나가기
+
+    def show_status(self):
+        print(f'\033[33m================={self.name}의 상태정보=====================\n'
+              f"{self.name}의 HP: {self.hp}/{self.max_hp}\n"
+              f"{self.name}의 MP: {self.mp}/{self.max_mp}\n"
+              f"{self.name}의 LEVEL: {self.level}\n"
+              f"{self.name}의 직업 : 나는 배짱이 \n"
+              f"{self.name}의 공격력 : {self.power}\n"
+              f"{self.name}의 속도 : {self.speed}\n"
+              f'========================================================\033[0m')
+
 
 #               - 도적(나이트로드) 회피율(Player speed 증가)
 
-
-class Thief_Character(Adventurer_Character):
+class Thief_Character(Character):
     def __init__(self, name, hp, mp, power, speed, critical, normal_attack_name, level, magic_attack_name):
-        super().__init__(self, name, hp, mp, power, speed, critical,
-                         normal_attack_name, level)
+        super().__init__(name, hp, mp, power, speed,
+                         critical, normal_attack_name, level)
+        self.magic_attack_name = magic_attack_name
+
+    def attack_box(self, target):
+        active = int(input('공격선택 :\n 일반공격(1) \n 마법공격(2)'))
+        if active == 1:
+            self.normal_attack(target)
+        elif active == 2:
+            self.Adventurer_Skill(target)
+        elif not active.isdigit():
+            print("숫자로만 입력해 주세요.")
+        elif active < 0 or active > 2:
+            print(f'\033[91m잘못된선택입니다.\033[0m')
+
+    def magic_attack(self, target):  # 일반공격
+        if self.mp >= 10:
+            damage = random.randint(self.power*2, self.power*3)
+            self.mp -= 10
+            target.hp = max(target.hp - damage, 0)
+            print(
+                f"{self.name}의 {self.magic_attack_name}! {target.name}에게 {damage}의 데미지를 입혔습니다.")
+            if target.hp == 0:
+                print(f"{target.name}이(가) 쓰러졌습니다.")
+        else:
+            # 마나가 부족할 경우
+            print("마나가 부족하여 마법공격을 할 수 없습니다.")
 
     def Thief_Skill(self, target):
         self.magic_attack_name = print(f'나선환!(らせんがん)!')
         damage = random.randint(self.power*1, self.power*2)
-        target.hp -= damage*2
+        target.hp = max(target.hp - damage*2, 0)
         print(
             f"{self.name}의 {self.magic_attack_name}! {target.name}에게 {damage}의 데미지를 입혔습니다.")
         if target.hp == 0:
             print(f"{target.name}이(가) 쓰러졌습니다.")
+        # 노말어택 2번나가기
+
+    def show_status(self):
+        print(f'\033[33m================={self.name}의 상태정보=====================\n'
+              f"{self.name}의 HP: {self.hp}/{self.max_hp}\n"
+              f"{self.name}의 MP: {self.mp}/{self.max_mp}\n"
+              f"{self.name}의 LEVEL: {self.level}\n"
+              f"{self.name}의 직업 : 나는 배짱이 \n"
+              f"{self.name}의 공격력 : {self.power}\n"
+              f"{self.name}의 속도 : {self.speed}\n"
+              f'========================================================\033[0m')
+
 
 #               - 궁수(보우마스터) 명중율에따른 치명타확률 (critical)
 
-
-class Archer_Character(Adventurer_Character):
+class Archer_Character(Character):
     def __init__(self, name, hp, mp, power, speed, critical, normal_attack_name, level, magic_attack_name):
-        super().__init__(self, name, hp, mp, power, speed, critical,
-                         normal_attack_name, level)
+        super().__init__(name, hp, mp, power, speed,
+                         critical, normal_attack_name, level)
+        self.magic_attack_name = magic_attack_name
+
+    def attack_box(self, target):
+        active = int(input('공격선택 :\n 일반공격(1) \n 마법공격(2)'))
+        if active == 1:
+            self.normal_attack(target)
+        elif active == 2:
+            self.Adventurer_Skill(target)
+        elif not active.isdigit():
+            print("숫자로만 입력해 주세요.")
+        elif active < 0 or active > 2:
+            print(f'\033[91m잘못된선택입니다.\033[0m')
+
+    def magic_attack(self, target):  # 일반공격
+        if self.mp >= 10:
+            damage = random.randint(self.power*2, self.power*3)
+            self.mp -= 10
+            target.hp = max(target.hp - damage, 0)
+            print(
+                f"{self.name}의 {self.magic_attack_name}! {target.name}에게 {damage}의 데미지를 입혔습니다.")
+            if target.hp == 0:
+                print(f"{target.name}이(가) 쓰러졌습니다.")
+        else:
+            # 마나가 부족할 경우
+            print("마나가 부족하여 마법공격을 할 수 없습니다.")
 
     def Archer_Skill(self, target):
         self.magic_attack_name = print(f'하일리히 프파일 (Heilig Pfeil)')
         damage = random.randint(self.power*1, self.power*2)
-        target.hp -= damage*2
+        target.hp = max(target.hp - damage*2, 0)
         print(
             f"{self.name}의 {self.magic_attack_name}! {target.name}에게 {damage}의 데미지를 입혔습니다.")
         if target.hp == 0:
             print(f"{target.name}이(가) 쓰러졌습니다.")
 
+    def show_status(self):
+        print(f'\033[33m================={self.name}의 상태정보=====================\n'
+              f"{self.name}의 HP: {self.hp}/{self.max_hp}\n"
+              f"{self.name}의 MP: {self.mp}/{self.max_mp}\n"
+              f"{self.name}의 LEVEL: {self.level}\n"
+              f"{self.name}의 직업 : 나는 배짱이 \n"
+              f"{self.name}의 공격력 : {self.power}\n"
+              f"{self.name}의 속도 : {self.speed}\n"
+              f'========================================================\033[0m')
 
 #               - 법사(플레임위자드) 디버프(Monster def 감소)
 #               - 전사(소울마스터) 신체강화(power 증가)
@@ -203,15 +377,14 @@ class Archer_Character(Adventurer_Character):
 #     def __init__(self, name, hp, mp, power, speed, critical, normal_attack_name, level):
 # self, name, hp, mp, power, speed, critical, normal_attack_name, level, magic_attack_name
 
-hp = 1000
-mp = 100
-power = randint(1, 10)
-speed = randint(1, 10)
-critical = randint(1, 10)
-level = 1
+# hp = 1000
+# mp = 100
+# power = randint(1, 10)
+# speed = randint(1, 10)
+# critical = randint(1, 10)
+# level = 1
 # player = Character(name, hp, mp, power, speed, critical, '모험가일반공격딱대.', level)
-# Adventurer = Adventurer_Character(player.name, player.hp, player.mp, player.power,
-#                                   player.speed, player.critical, '살려주면좋겠다~!', player.level, '나는 죽지 않는다.')
+# Adventurer = Adventurer_Character(player.name, player.hp, player.mp, player.power, player.speed, player.critical, '살려주면좋겠다~!', player.level, '나는 죽지 않는다.')
 # Magician = Magician_Character(player.name, player.hp, player.mp, player.power,
 #                               player.speed, player.critical, '100만 볼트 방전', player.level, '6,000만 볼트 뇌룡')
 # Warrior = Warrior_Character(player.name, player.hp, player.mp, player.power,
@@ -221,18 +394,109 @@ level = 1
 # Archer = Archer_Character(player.name, player.hp, player.mp, player.power,
 #                           player.speed, player.critical, '영자병장(靈子兵裝)', player.level, '하일리히 프파일 (Heilig Pfeil)')
 
-
 # name, hp, power, speed선공율, normal_attack_name):
-monster_low = Monster("리본돼지", 50, 5, 10, "애교부리기 !")
-monster_low = Monster("파란리본돼지", 60, 7, 10, "귀여운 애교부리기 !")
-monster_low = Monster("와일드보어", 80, 15, 12, "몸통박치기 !")
-monster_middle = Monster("주니어예티", 100, 10, 10, "내려찍기 !")
-monster_middle = Monster("파이어드레이크", 110, 10, 12, "화염방사 !")
-monster_middle = Monster("아이스드레이크", 130, 20, 12, "냉동펀치 !")
-monster_high = Monster("마뇽", 140, 15, 15, "오로라 브레스 !")
-monster_high = Monster("주니어발록", 150, 20, 15, "파이어 볼 !")
-monster_high = Monster("발록", 160, 30, 15, "떨어트리기 !")
-monster_boss = Monster("페어리워터_박", 300, 100, 30, "여러분 물 마셔요~!(꼴깍)")
+monster_level_1 = [Monster("리본돼지", 50, 5, 10, "\033[95m애교부리기 !\033[0m")]
+monster_level_2 = [Monster("파란리본돼지", 60, 7, 10, "\033[95m귀여운 애교부리기 !\033[0m")]
+monster_level_3 = [Monster("와일드보어", 80, 15, 12, "\033[97m몸통박치기 !\033[0m")]
+monster_level_4 = [Monster("주니어예티", 100, 10, 10, "\033[90m내려찍기 !\033[0m")]
+monster_level_5 = [Monster("파이어드레이크", 110, 10, 12, "\033[31m화염방사 !\033[0m")]
+monster_level_6 = [Monster("아이스드레이크", 130, 20, 12, "\033[34m냉동펀치 !\033[0m")]
+monster_level_7 = [Monster("마뇽", 140, 15, 15, "\033[35m오로라 브레스 !\033[0m")]
+monster_level_8 = [Monster("주니어발록", 150, 20, 15, "\033[32m파이어 볼 !\033[0m")]
+monster_level_9 = [Monster("발록", 160, 30, 15, "\033[30m떨어트리기 !\033[0m")]
+monster_level_10 = Monster("페어리워터_박", 300, 100, 30,
+                           "\033[34m여러분 물 마셔요~!(꼴깍)\033[0m")
+
+monster_dic = {
+    "level_low": monster_level_1 + monster_level_2 + monster_level_3,
+    "level_middle": monster_level_4 + monster_level_5 + monster_level_6 + monster_level_7 + monster_level_8 + monster_level_9,
+    "level_boss": monster_level_3 + monster_level_6 + monster_level_9
+}
+# 페어리고정1나머지2마리랜덤
+
+# =========================================================================================================================
+# 1~2층 몬스터 랜덤 추출 (1:3 전투) 전 뭐하면 좋을까요...
+# monster_list = {}
+# # if floor < 3 :
+# for k in ["level_low"]:
+#     selected_monster_1 = random.choice(monster_dic[k])
+#     monster_list[k] = Monster(selected_monster_1.name, selected_monster_1.hp,
+#                               selected_monster_1.power, selected_monster_1.speed, selected_monster_1.normal_attack_name)
+
+#     selected_monster_2 = random.choice(monster_dic[k])
+#     monster_list[k] = Monster(selected_monster_2.name, selected_monster_2.hp,
+#                               selected_monster_2.power, selected_monster_2.speed, selected_monster_2.normal_attack_name)
+
+#     selected_monster_3 = random.choice(monster_dic[k])
+#     monster_list[k] = Monster(selected_monster_3.name, selected_monster_3.hp,
+#                               selected_monster_3.power, selected_monster_3.speed, selected_monster_3.normal_attack_name)
+#     print(f"{selected_monster_1.name}가 나타났다!\n"
+#           f"{selected_monster_1.name}의 HP : {selected_monster_1.hp}")
+#     print(f"{selected_monster_2.name}가 나타났다!\n"
+#           f"{selected_monster_2.name}의 HP : {selected_monster_2.hp}")
+#     print(f"{selected_monster_3.name}가 나타났다!\n"
+#           f"{selected_monster_3.name}의 HP : {selected_monster_3.hp}")
+# # =========================================================================================================================
+# # 4~6층 몬스터 랜덤 추출 (1:3 전투)
+# # elif floor < 6 :
+# monster_list_middle = {}
+# for k in ["level_middle"]:
+#     selected_monster_4 = random.choice(monster_dic[k])
+#     monster_list_middle[k] = Monster(selected_monster_4.name, selected_monster_4.hp,
+#                                      selected_monster_4.power, selected_monster_4.speed, selected_monster_4.normal_attack_name)
+
+#     selected_monster_5 = random.choice(monster_dic[k])
+#     monster_list_middle[k] = Monster(selected_monster_5.name, selected_monster_5.hp,
+#                                      selected_monster_5.power, selected_monster_5.speed, selected_monster_5.normal_attack_name)
+
+#     selected_monster_6 = random.choice(monster_dic[k])
+#     monster_list_middle[k] = Monster(selected_monster_6.name, selected_monster_6.hp,
+#                                      selected_monster_6.power, selected_monster_6.speed, selected_monster_6.normal_attack_name)
+#     print(f"{selected_monster_4.name}가 나타났다!\n"
+#           f"{selected_monster_4.name}의 HP : {selected_monster_4.hp}")
+#     print(f"{selected_monster_5.name}가 나타났다!\n"
+#           f"{selected_monster_5.name}의 HP : {selected_monster_5.hp}")
+#     print(f"{selected_monster_6.name}가 나타났다!\n"
+#           f"{selected_monster_6.name}의 HP : {selected_monster_6.hp}")
+# # =========================================================================================================================
+# # 7~9층 몬스터 랜덤 추출 (1:3 전투)
+# # elif floor < 9 :
+# monster_list_high = {}
+# for k in ["level_high"]:
+#     selected_monster_7 = random.choice(monster_dic[k])
+#     monster_list[k] = Monster(selected_monster_7.name, selected_monster_7.hp,
+#                               selected_monster_7.power, selected_monster_7.speed, selected_monster_7.normal_attack_name)
+
+#     selected_monster_8 = random.choice(monster_dic[k])
+#     monster_list[k] = Monster(selected_monster_8.name, selected_monster_8.hp,
+#                               selected_monster_8.power, selected_monster_8.speed, selected_monster_8.normal_attack_name)
+
+#     selected_monster_9 = random.choice(monster_dic[k])
+#     monster_list[k] = Monster(selected_monster_9.name, selected_monster_9.hp,
+#                               selected_monster_9.power, selected_monster_9.speed, selected_monster_9.normal_attack_name)
+#     print(f"{selected_monster_7.name}가 나타났다!\n"
+#           f"{selected_monster_7.name}의 HP : {selected_monster_7.hp}")
+#     print(f"{selected_monster_8.name}가 나타났다!\n"
+#           f"{selected_monster_8.name}의 HP : {selected_monster_8.hp}")
+#     print(f"{selected_monster_9.name}가 나타났다!\n"
+#           f"{selected_monster_9.name}의 HP : {selected_monster_9.hp}")
+# # =========================================================================================================================
+# # 보스방 랜덤추출 (1:3 전투)
+# # else :
+# monster_list_boss = {}
+# for k in ["level_boss"]:
+#     bossroom_3 = Monster("와일드보어", 80, 15, 12, "몸통박치기 !")
+#     bossroom_6 = Monster("아이스드레이크", 130, 20, 12, "냉동펀치 !")
+#     bossroom_9 = Monster("발록", 160, 30, 15, "떨어트리기 !")
+#     bossroom_10 = Monster("페어리워터_박", 300, 100, 30, "여러분 물 마셔요~!(꼴깍)")
+#     print(f"{bossroom_3.name}가 나타났다!\n"
+#           f"{bossroom_3.name}의 HP : {bossroom_3.hp}")
+#     print(f"{bossroom_6.name}가 나타났다!\n"
+#           f"{bossroom_6.name}의 HP : {bossroom_6.hp}")
+#     print(f"{bossroom_9.name}가 나타났다!\n"
+#           f"{bossroom_9.name}의 HP : {bossroom_9.hp}")
+#     print(f"{bossroom_10.name}가 나타났다!\n"
+#           f"{bossroom_10.name}의 HP : {bossroom_10.hp}")
 
 
 # (self, name, hp, mp, power, speed, critical, , normal_attack_name, magic_attack_name):
