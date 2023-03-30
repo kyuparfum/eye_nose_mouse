@@ -111,7 +111,7 @@ class Adventurer_Character(Character):
                 print(f"{target.name}이(가) 쓰러졌습니다.")
         else:
             # 마나가 부족할 경우
-            print("마나가 부족하여 마법공격을 할 수 없습니다.")
+            print("\033[32m마나가 부족하여 마법공격을 할 수 없습니다.\033[0m")
 
     def Adventurer_Skill(self, target):
         self.magic_attack_name = print(f'맞은데 또 맞아라!')
@@ -163,7 +163,7 @@ class Magician_Character(Character):
                 print(f"{target.name}이(가) 쓰러졌습니다.")
         else:
             # 마나가 부족할 경우
-            print("마나가 부족하여 마법공격을 할 수 없습니다.")
+            print("\033[32m마나가 부족하여 마법공격을 할 수 없습니다.\033[0m")
 
     def Magician_Skill(self, target):
         self.magic_attack_name = print(f'6,000만 볼트 뇌룡')
@@ -232,7 +232,7 @@ class Warrior_Character(Character):
                 print(f"{target.name}이(가) 쓰러졌습니다.")
         else:
             # 마나가 부족할 경우
-            print("마나가 부족하여 마법공격을 할 수 없습니다.")
+            print("\033[32m마나가 부족하여 마법공격을 할 수 없습니다.\033[0m")
 
     def Warrior_Skill(self, target):
         self.magic_attack_name = print(f'천본앵경엄(せんぼんざくらかげよし)')
@@ -285,7 +285,7 @@ class Thief_Character(Character):
                 print(f"{target.name}이(가) 쓰러졌습니다.")
         else:
             # 마나가 부족할 경우
-            print("마나가 부족하여 마법공격을 할 수 없습니다.")
+            print("\033[32m마나가 부족하여 마법공격을 할 수 없습니다.\033[0m")
 
     def Thief_Skill(self, target):
         self.magic_attack_name = print(f'나선환!(らせんがん)!')
@@ -338,7 +338,7 @@ class Archer_Character(Character):
                 print(f"{target.name}이(가) 쓰러졌습니다.")
         else:
             # 마나가 부족할 경우
-            print("마나가 부족하여 마법공격을 할 수 없습니다.")
+            print("\033[32m마나가 부족하여 마법공격을 할 수 없습니다.\033[0m")
 
     def Archer_Skill(self, target):
         self.magic_attack_name = print(f'하일리히 프파일 (Heilig Pfeil)')

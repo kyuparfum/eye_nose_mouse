@@ -472,7 +472,7 @@ def game():
                 floor += 1
                 continue
         elif floor == 11:
-            endding_bye('\033[33m 게임 끝났어 친구야~!\033[0m')
+
             break
 
         if selected_monster_1.hp == 0 and selected_monster_2.hp == 0 and selected_monster_3.hp == 0 and player.hp > 0:
@@ -534,3 +534,9 @@ while game_start == True:
         break
     else:
         print("\033[31m잘못 누르셨습니다.\033[0m\n")
+
+
+time.sleep(3)
+os.system('clear')  # 콘솔창 clear
+
+endding_bye('\033[33m 게임 끝났어 친구야~! 고생했다~!\033[0m')
