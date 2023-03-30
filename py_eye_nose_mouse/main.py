@@ -4,8 +4,8 @@ import random
 import os
 import time
 import sys
-from endding import *
 from start import *
+from endding import *
 
 game_start = True
 
@@ -472,7 +472,7 @@ def game():
                 floor += 1
                 continue
         elif floor == 11:
-            print('=======================여기에 엔딩=======================')
+            endding_bye('\033[33m 게임 끝났어 친구야~!\033[0m')
             break
 
         if selected_monster_1.hp == 0 and selected_monster_2.hp == 0 and selected_monster_3.hp == 0 and player.hp > 0:
@@ -525,7 +525,7 @@ while game_start == True:
 
         print(f'게임을 시작하겠습니다.')
         game()
-        endding_bye(text_2)
+
         break
     elif command == '2':
         print(f"튜토리얼진행으로 넘어가기")
